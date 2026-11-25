@@ -1,5 +1,5 @@
 import { passagesFrom, validateAI } from './study.ts';
-export type AIConfig = { OPENAI_API_KEY?: string; OPENAI_MODEL?: string };
+export type AIConfig = { OPENAI_API_KEY?: string; OPENAI_MODEL?: string; OPENAI_EXTRACTION_MODEL?: string };
 const json = (data: unknown, status=200) => Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function handleStudy(request: Request, config: AIConfig, fetcher: typeof fetch=fetch): Promise<Response> {
   if(request.method!=='POST') return json({error:'Method not allowed.'},405);
