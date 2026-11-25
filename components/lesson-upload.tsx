@@ -47,8 +47,8 @@ export function LessonUpload({files,setFiles,text,onImported,busy,importing,setI
         const file=files[i];setStatus(`Importing ${i+1} of ${files.length}: ${file.name}`);
         const response=await fetch(`/api/upload?${new URLSearchParams({filename:file.name})}`,{method:'POST',headers:{'Content-Type':file.type||'application/octet-stream'},body:file});
         const data=await response.json() as {text?:string;method?:string;error?:string};
-        if(!response.ok||typeof data.text!=='string'||!['text','ai-extracted'].includes(data.method||''))throw new Error(`${file.name}: ${data.error||'Unable to import this file.'}`);
-        imported.push(data.text);ai ||= data.method==='ai-extracted';
+        if(!response.ok||typeof data.text!=='string'||!['text','free-extracted'].includes(data.method||''))throw new Error(`${file.name}: ${data.error||'Unable to import this file.'}`);
+        imported.push(data.text);ai ||= data.method==='free-extracted';
         if([text.trim(),...imported].filter(Boolean).join('\n\n').length>MAX_LENGTH)throw new Error('The combined lesson exceeds 12,000 characters. Remove a file or shorten the current lesson before importing.');
       }
       onImported([text.trim(),...imported].filter(Boolean).join('\n\n'),ai);
@@ -62,7 +62,7 @@ export function LessonUpload({files,setFiles,text,onImported,busy,importing,setI
       <input ref={input} type="file" multiple accept={FILE_ACCEPT} className="sr-only" aria-label="Choose learning materials" tabIndex={-1} disabled={locked} onChange={e=>{if(e.target.files)select(e.target.files);e.target.value='';}}/>
       <button className="upload-choose" type="button" disabled={locked} onClick={()=>input.current?.click()}>Choose files</button>
     </div>
-    {!!files.length&&<><ul className="upload-list">{files.map((file,i)=><Preview key={`${file.name}-${file.size}-${file.lastModified}-${i}`} file={file} disabled={locked} onRemove={()=>{setFiles(files.filter((_,j)=>i!==j));setError('');setStatus('');}}/>)}</ul><p className="upload-note">Import sends selected files to the app server. Images and non-TXT documents require the configured AI provider and are sent there for text extraction. Office files can be opened locally before import. Avoid private or sensitive material.</p><button type="button" className="upload-choose upload-import" disabled={locked} onClick={upload}>{importing?'Importing…':`Import ${files.length} ${files.length===1?'file':'files'}`}</button></>}
+    {!!files.length&&<><ul className="upload-list">{files.map((file,i)=><Preview key={`${file.name}-${file.size}-${file.lastModified}-${i}`} file={file} disabled={locked} onRemove={()=>{setFiles(files.filter((_,j)=>i!==j));setError('');setStatus('');}}/>)}</ul><p className="upload-note">Import sends selected files to the app server. Images and non-TXT documents use the configured free extraction service. Office files can be opened locally before import. Avoid private or sensitive material.</p><button type="button" className="upload-choose upload-import" disabled={locked} onClick={upload}>{importing?'Importing…':`Import ${files.length} ${files.length===1?'file':'files'}`}</button></>}
     {status&&<p className="upload-note" role="status">{status}</p>}{error&&<div className="error upload-error" role="alert">{error}</div>}
   </section>;
 }

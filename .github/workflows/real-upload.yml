@@ -1,0 +1,35 @@
+name: Real upload integration
+on:
+  pull_request:
+    paths:
+      - 'extractor/**'
+      - 'lib/upload-handler.ts'
+      - 'tests/real-imports.mjs'
+      - '.github/workflows/real-upload.yml'
+  workflow_dispatch:
+jobs:
+  real-files:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng tesseract-ocr-mya poppler-utils libreoffice-writer libreoffice-impress fonts-dejavu-core
+      - run: python -m pip install -r extractor/requirements.txt pillow python-docx python-pptx reportlab
+      - run: python extractor/make_fixtures.py /tmp/sarmate-real-files
+      - run: npm ci
+      - run: EXTRACTOR_TOKEN=integration-only uvicorn extractor.app:app --host 127.0.0.1 --port 8080 > /tmp/sarmate-extractor.log 2>&1 &
+      - run: |
+          printf 'EXTRACTOR_URL=http://127.0.0.1:8080\nEXTRACTOR_TOKEN=integration-only\n' > .dev.vars
+          npm run dev > /tmp/sarmate-app.log 2>&1 &
+      - run: |
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8080/health && break; sleep 1; done
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:5173/ > /dev/null && break; sleep 1; done
+          node --experimental-strip-types tests/real-imports.mjs /tmp/sarmate-real-files
+      - if: failure()
+        run: cat /tmp/sarmate-extractor.log /tmp/sarmate-app.log
