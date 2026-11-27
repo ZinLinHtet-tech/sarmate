@@ -4,14 +4,12 @@ import { FileText, Upload, X } from 'lucide-react';
 import { FILE_ACCEPT, FILE_TYPES, MAX_BATCH_BYTES, MAX_FILES, extensionOf, isImage, validateFile } from '../lib/uploads';
 import { MAX_LENGTH } from '../lib/study';
 
+const previewUrls = new WeakMap<File, string>();
+
 function Preview({file,disabled,onRemove}:{file:File;disabled:boolean;onRemove:()=>void}) {
-  const [url,setUrl]=useState('');
   const ext=extensionOf(file.name)!;
-  useEffect(()=>{
-    const object=URL.createObjectURL(new Blob([file],{type:FILE_TYPES[ext]}));
-    setUrl(object);
-    return ()=>URL.revokeObjectURL(object);
-  },[file,ext]);
+  const url=previewUrls.get(file)||'';
+  useEffect(()=>()=>{if(url){URL.revokeObjectURL(url);previewUrls.delete(file);}},[file,url]);
   const inline=isImage(ext)||ext==='pdf'||ext==='txt';
   return <li className="upload-file">
     {isImage(ext)&&url?<img className="upload-thumb" src={url} alt=""/>:<span className="upload-thumb upload-doc"><FileText size={21}/></span>}
@@ -35,6 +33,7 @@ export function LessonUpload({files,setFiles,text,onImported,busy,importing,setI
       if(next.length>=MAX_FILES){errors.push(`${file.name}: select up to 5 files.`);continue;}
       if(next.reduce((sum,f)=>sum+f.size,0)+file.size>MAX_BATCH_BYTES){errors.push(`${file.name}: combined files must be at most 10 MB.`);continue;}
       next.push(file);
+      previewUrls.set(file,URL.createObjectURL(new Blob([file],{type:FILE_TYPES[extensionOf(file.name)!]})));
     }
     setFiles(next);setError(errors.join('\n'));setStatus('');
   }
