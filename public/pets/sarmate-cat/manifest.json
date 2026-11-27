@@ -1,0 +1,25 @@
+{
+  "schema": "sarmate-pet-sprites/1",
+  "id": "sarmate-cat",
+  "displayName": "Mate",
+  "sheet": "/pets/sarmate-cat/spritesheet.png",
+  "frameWidth": 12,
+  "frameHeight": 12,
+  "scale": 3,
+  "columns": 12,
+  "rows": 1,
+  "animations": {
+    "greet": { "frames": 1, "fps": 4, "loop": false, "startFrame": 0, "row": 0 },
+    "idle": { "frames": 1, "fps": 2, "loop": true, "startFrame": 1, "row": 0 },
+    "read": { "frames": 1, "fps": 2, "loop": true, "startFrame": 2, "row": 0 },
+    "think": { "frames": 1, "fps": 4, "loop": true, "startFrame": 3, "row": 0 },
+    "upload": { "frames": 1, "fps": 4, "loop": false, "startFrame": 4, "row": 0 },
+    "celebrate": { "frames": 1, "fps": 6, "loop": false, "startFrame": 5, "row": 0 },
+    "encourage": { "frames": 1, "fps": 2, "loop": true, "startFrame": 6, "row": 0 },
+    "hint": { "frames": 1, "fps": 4, "loop": true, "startFrame": 7, "row": 0 },
+    "explain": { "frames": 1, "fps": 2, "loop": true, "startFrame": 8, "row": 0 },
+    "search": { "frames": 1, "fps": 6, "loop": true, "startFrame": 9, "row": 0 },
+    "error": { "frames": 1, "fps": 3, "loop": false, "startFrame": 10, "row": 0 },
+    "sleep": { "frames": 1, "fps": 1, "loop": true, "startFrame": 11, "row": 0 }
+  }
+}

@@ -26,7 +26,18 @@ npm run build
 - Expand original passages, reveal reference answers, search by keyword.
 - Export a Markdown guide.
 - Responsive layout and keyboard-accessible controls.
+- A hideable, animated pixel-cat companion reacts to study activity and offers a local three-attempt practice nudge with hints and source-linked explanations (`docs/PET-COMPANION.md`).
 - No database, no analytics, no persistent lesson history. Reloading clears state.
+
+## Study companion (Mate)
+
+Mate is a small pixel-cat study buddy in the corner of the study studio. It waves on load, inspects imported files, thinks while a guide is built, reads in the notes tab, focuses during practice, searches in the Ask tab, and reacts to errors. It celebrates correct answers and walks through **try again → hint → answer + explanation** across three incorrect attempts.
+
+Core companion behavior is entirely client-side. It needs **no new backend, database, API key or analytics** and works in both source mode and AI mode. Speech bubbles follow the lesson language selector (English or Burmese), and hide/mute preferences persist in `localStorage`.
+
+Use the eye button to hide Mate and the small **Show Mate** pill to restore it; the speaker button mutes speech bubbles. `prefers-reduced-motion` disables animation. On small screens the card shrinks and only its controls are clickable, so core study actions stay usable.
+
+See `docs/PET-COMPANION.md` for architecture, states and sprite-asset details.
 
 ## Learning material uploads
 

@@ -1,0 +1,56 @@
+{
+  "format": "sarmate-pet/1",
+  "tile": 12,
+  "scale": 3,
+  "sheet": null,
+  "palette": {
+    "o": "#182c29",
+    "g": "#23664f",
+    "l": "#dcec9c",
+    "w": "#f7f9f7",
+    "p": "#f2b8a2",
+    "y": "#e6c15a"
+  },
+  "moodFrame": {
+    "hidden": "idle",
+    "greeting": "happy",
+    "idle": "idle",
+    "reading": "read",
+    "focused": "read",
+    "thinking": "think",
+    "uploading": "carry",
+    "celebrating": "happy",
+    "encouraging": "idle",
+    "hinting": "think",
+    "explaining": "read",
+    "searching": "search",
+    "error": "sad",
+    "sleeping": "sleep"
+  },
+  "frames": {
+    "idle": {
+      "rows": ".o........o./.oo......oo./.ogg....ggo./.oggggggggo./.oglggglggo./.ogggpgggo../.oggggggggo./..ogwwwwgo../..ogwwwwgo../..oggggggo../...o....o.../..oo....oo.."
+    },
+    "read": {
+      "rows": ".o........o./.oo......oo./.ogg....ggo./.oggggggggo./.oggggggggo./.ogggpgggo../.oggggggggo./..oglllggo../..oglllggo../..oggggggo../...o....o.../..oo....oo.."
+    },
+    "think": {
+      "rows": ".o.......yo./.oo......oo./.ogg....ggo./.oggggggggo./.ogglgggggo./.ogggpgggo../.oggggggggo./..ogwwwwgo../..ogwwwwgo../..oggggggo../...o....o.../..oo....oo.."
+    },
+    "carry": {
+      "rows": ".o........o./.oo......oo./.ogg....ggo./.oggggggggo./.oglggglggo./.ogggpgggo.o/.oggggggggoo/..ogwwwwgoow/..ogwwwwgoow/..oggggggo../...o....o.../..oo....oo.."
+    },
+    "search": {
+      "rows": ".o........o./.oo......oo./.ogg....ggo./.oggggggggo./.oglygglggo./.ogggpgggo../.oggggggggo./..ogwwwwgo.y/..ogwwwwgo.y/..oggggggo../...o....o.../..oo....oo.."
+    },
+    "happy": {
+      "rows": ".o..y....yo./.oo......oo./.ogg....ggo./.oggggggggo./.ogygggyggo./.ogggpgggo../.oggwwwgggo./..ogwwwwgo../..ogwwwwgo../..oggggggo../...o....o.../..oo....oo.."
+    },
+    "sad": {
+      "rows": ".o........o./.oo......oo./.ogg....ggo./.oggggggggo./.oggggggggo./.oggglggggo./.oggwoowggo./..ogwwwwgo../..ogwwwwgo../..oggggggo../...o....o.../..oo....oo.."
+    },
+    "sleep": {
+      "rows": ".o.....y..o./.oo......oo./.ogg....ggo./.oggggggggo./.oggggggggo./.ogggpgggo../.oggggggggo./..ogwwwwgo../..ogwwwwgo../..oggggggo../...o....o.../..oo....oo.."
+    }
+  }
+}
