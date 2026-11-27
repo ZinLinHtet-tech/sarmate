@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Mate — final sprite preview</title>
+  <style>
+    body { margin: 0; padding: 24px; background: #f7f9f7; color: #4a2e22; font-family: system-ui, sans-serif; }
+    body.dark { background: #1d2b2a; color: #fff1d6; }
+    h1 { font-size: 20px; margin: 0 0 6px; }
+    p { margin: 0 0 18px; opacity: .75; font-size: 13px; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+    select, button { font: inherit; padding: 7px 10px; border: 1px solid #b86a32; border-radius: 8px; background: #fff; color: #4a2e22; }
+    body.dark select, body.dark button { background: #2b3c3a; color: #fff1d6; }
+    .stage { display: flex; gap: 32px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 24px; }
+    .viewer { display: grid; place-items: center; gap: 8px; }
+    .label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .frame { background-repeat: no-repeat; image-rendering: pixelated; image-rendering: crisp-edges; border: 1px solid rgba(74,46,34,.25); }
+    .actual { width: var(--frame-size); height: var(--frame-size); background-size: var(--sheet-size) auto; background-position-x: var(--start); background-position-y: 0; }
+    .large { width: calc(var(--frame-size) * 4); height: calc(var(--frame-size) * 4); background-size: calc(var(--sheet-size) * 4) auto; background-position-x: var(--start); background-position-y: 0; }
+    .playing { animation-name: mate-play; animation-timing-function: steps(var(--steps), end); animation-duration: var(--duration); animation-fill-mode: forwards; }
+    .paused { animation-play-state: paused; }
+    @keyframes mate-play { from { background-position-x: var(--start); } to { background-position-x: var(--end); } }
+    img { max-width: 100%; image-rendering: pixelated; border: 1px solid rgba(74,46,34,.25); }
+  </style>
+</head>
+<body>
+  <h1>Mate — final runtime sprite preview</h1>
+  <p>12 animations · 74 unique frames · 32×32 logical pixels · transparent PNG</p>
+  <div class="toolbar">
+    <select id="animation" aria-label="Select animation"></select>
+    <button id="play" type="button">Pause</button>
+    <label><input id="loop" type="checkbox" /> Force loop</label>
+    <button id="theme" type="button">Dark background</button>
+  </div>
+  <div class="stage">
+    <div class="viewer">
+      <span class="label">Actual app size</span>
+      <div id="actual" class="frame actual"></div>
+    </div>
+    <div class="viewer">
+      <span class="label">4× pixel inspection</span>
+      <div id="large" class="frame large"></div>
+    </div>
+  </div>
+  <h2>Contact sheet — every frame</h2>
+  <img src="contact-sheet.png" alt="Mate animation contact sheet" />
+  <script>
+    const actual = document.getElementById('actual');
+    const large = document.getElementById('large');
+    const select = document.getElementById('animation');
+    const playButton = document.getElementById('play');
+    const loopInput = document.getElementById('loop');
+    const themeButton = document.getElementById('theme');
+    let manifest = null;
+    let playing = true;
+
+    function applyVariables() {
+      const frameSize = manifest.frameWidth * manifest.scale;
+      const sheetSize = manifest.columns * frameSize;
+      for (const el of [actual, large]) {
+        el.style.setProperty('--frame-size', `${frameSize}px`);
+        el.style.setProperty('--sheet-size', `${sheetSize}px`);
+        el.style.backgroundImage = `url("${manifest.sheet}")`;
+      }
+    }
+
+    function render() {
+      const key = select.value;
+      const animation = manifest.animations[key];
+      const frameSize = manifest.frameWidth * manifest.scale;
+      const start = -animation.startFrame * frameSize;
+      const end = -(animation.startFrame + animation.frames) * frameSize;
+      const duration = animation.durationMs || 1000 * animation.frames / animation.fps;
+      const loop = loopInput.checked || animation.loop;
+      for (const el of [actual, large]) {
+        const factor = el === actual ? 1 : 4;
+        el.className = 'frame ' + (el === actual ? 'actual' : 'large');
+        el.style.setProperty('--start', `${start * factor}px`);
+        el.style.setProperty('--end', `${end * factor}px`);
+        el.style.setProperty('--duration', `${duration}ms`);
+        el.style.setProperty('--steps', String(animation.frames));
+        el.style.backgroundPosition = `${start}px 0px`;
+        void el.offsetWidth;
+        if (playing && animation.frames > 1) {
+          el.classList.add('playing');
+          el.style.animationIterationCount = loop ? 'infinite' : '1';
+          el.style.animationFillMode = loop ? 'none' : 'forwards';
+        }
+        if (!playing) el.classList.add('paused');
+      }
+    }
+
+    fetch('animation-manifest.json')
+      .then(response => response.json())
+      .then(data => {
+        manifest = data;
+        applyVariables();
+        for (const key of Object.keys(manifest.animations)) {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = key;
+          select.appendChild(option);
+        }
+        render();
+      })
+      .catch(error => { document.body.insertAdjacentText('beforeend', `Manifest load failed: ${error.message}`); });
+
+    select.addEventListener('change', render);
+    loopInput.addEventListener('change', render);
+    playButton.addEventListener('click', () => {
+      playing = !playing;
+      playButton.textContent = playing ? 'Pause' : 'Play';
+      render();
+    });
+    themeButton.addEventListener('click', () => {
+      const dark = document.body.classList.toggle('dark');
+      themeButton.textContent = dark ? 'Light background' : 'Dark background';
+    });
+  </script>
+</body>
+</html>
